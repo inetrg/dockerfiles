@@ -22,6 +22,8 @@ RUN dnf install -y git \
   gcc gcc-c++ \
   clang \
   openssl-devel \
+  libasan \
+  libubsan \
   gcovr \
  && dnf clean all
 
