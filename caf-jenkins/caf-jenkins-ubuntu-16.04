@@ -1,10 +1,10 @@
 ############################################################
 # Dockerfile for Jenkins slave with clang-4.0
-# Based on Debian Stretch
+# Based on Ubuntu-16.04
 ############################################################
 
-FROM debian:stretch
-MAINTAINER Raphael Hiesgen
+FROM ubuntu:16.04
+MAINTAINER Jakob Otto
 
 # Install Essentials
 RUN apt-get update -y && \
@@ -20,6 +20,7 @@ RUN apt-get install -y git \
   openssh-server \
   openjdk-8-jdk \
   cmake \
+  gcc g++ \
   clang-4.0 \
   libssl-dev \
   gcovr \

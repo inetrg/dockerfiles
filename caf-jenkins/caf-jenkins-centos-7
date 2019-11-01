@@ -1,29 +1,36 @@
 ############################################################
-# Dockerfile for Jenkins slave with clang-4.0
-# Based on Debian Stretch
+# Dockerfile for Jenkins slave with gcc 7.3
+# Based on CentOS 7
 ############################################################
 
-FROM debian:stretch
-MAINTAINER Raphael Hiesgen
+FROM centos:7
+MAINTAINER Jakob Otto
 
 # Install Essentials
-RUN apt-get update -y && \
-  apt-get upgrade -y && \
-  apt-get autoremove -y && \
-  apt-get autoclean -y
+RUN yum update -y \
+   && yum install -y centos-release-scl \
+   && yum clean all
 
 ##################### INSTALL TOOLS ########################
 
 # Install Packages
-RUN apt-get install -y git \
+RUN yum install -y git \
   wget \
+  make \
   openssh-server \
-  openjdk-8-jdk \
+  sudo \
+  java-11-openjdk \
   cmake \
-  clang-4.0 \
-  libssl-dev \
-  gcovr \
- && apt-get autoclean
+  docker \
+  kcov \
+  gcc gcc-c++ \
+  clang \
+  openssl-devel \
+  libasan \
+  libubsan \
+  python-pip \
+  devtoolset-7 \
+ && yum clean all
 
 ####################### SETUP SSH #########################
 
@@ -37,9 +44,8 @@ RUN sed -ri 's/^session\s+required\s+pam_loginuid.so$/session optional pam_login
 # Create Jenkins User
 RUN useradd jenkins -m -s /bin/bash
 
-# set clang as default compiler
-RUN echo "export CXX=clang++-4.0" >> /home/jenkins/.bashrc \
-   && echo "export CC=clang-4.0" >> /home/jenkins/.bashrc
+# enable scl tools for gcc 7.3
+RUN echo "source scl_source enable devtoolset-7" >> /home/jenkins/.bashrc
 
 # Add public key for Jenkins login
 RUN mkdir /home/jenkins/.ssh
@@ -56,7 +62,7 @@ RUN chmod 700 /home/jenkins/.ssh
 # COPY /files/resolv.conf /etc/resolv.conf
 
 # Ubuntu requires this dir to be created
-RUN mkdir -p /var/run/sshd
+# RUN mkdir -p /var/run/sshd
 
 # Expose SSH port and run SSHD
 EXPOSE 22

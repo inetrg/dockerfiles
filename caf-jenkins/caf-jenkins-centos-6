@@ -1,50 +1,51 @@
 ############################################################
-# Dockerfile for Jenkins slave with gcc 4.9
-# Based on Debian Jessie
+# Dockerfile for Jenkins slave with gcc 7.3
+# Based on CentOS 6
 ############################################################
 
-FROM debian:jessie
-MAINTAINER Raphael Hiesgen
+FROM centos:6
+MAINTAINER Jakob Otto
 
 # Install Essentials
-RUN apt-get update && \
-  apt-get upgrade -y && \
-  apt-get autoremove
+RUN yum update -y \
+   && yum install -y centos-release-scl \
+   && yum clean all
 
 ##################### INSTALL TOOLS ########################
 
 # Install Packages
-RUN apt-get install -y git \
+RUN yum install -y git \
   wget \
+  make \
   openssh-server \
+  sudo \
+  java-11-openjdk \
   cmake \
-  gcc g++ \
+  docker \
+  kcov \
+  gcc gcc-c++ \
   clang \
-  libssl-dev \
-  gcovr \
- && apt-get autoclean
-
-#################### INSTALL JAVA 8 #######################
-# https://linux-tips.com/t/how-to-install-java-8-on-debian-jessie/349
-
-RUN echo "deb http://http.debian.net/debian jessie-backports main" | \
-	tee --append /etc/apt/sources.list.d/jessie-backports.list > /dev/null
-
-RUN apt-get update
-RUN apt-get install -y -t jessie-backports openjdk-8-jdk
-#RUN update-java-alternatives -s java-1.8.0-openjdk-amd64
+  openssl-devel \
+  libasan \
+  libubsan \
+  python-pip \
+  devtoolset-7 \
+ && yum clean all
 
 ####################### SETUP SSH #########################
 
 # gen dummy keys, centos doesn't autogen them like ubuntu does
-RUN /usr/bin/ssh-keygen -A
+# RUN /usr/bin/ssh-keygen -A
 
 # Set SSH Configuration to allow remote logins without /proc write access
 RUN sed -ri 's/^session\s+required\s+pam_loginuid.so$/session optional pam_loginuid.so/' \
-	/etc/pam.d/sshd
+  /etc/pam.d/sshd
 
 # Create Jenkins User
 RUN useradd jenkins -m -s /bin/bash
+
+# enable scl tools for gcc 7.3
+RUN echo "source scl_source enable devtoolset-7" >> /home/jenkins/.bashrc
 
 # Add public key for Jenkins login
 RUN mkdir /home/jenkins/.ssh
@@ -61,7 +62,7 @@ RUN chmod 700 /home/jenkins/.ssh
 # COPY /files/resolv.conf /etc/resolv.conf
 
 # Ubuntu requires this dir to be created
-RUN mkdir -p /var/run/sshd
+# RUN mkdir -p /var/run/sshd
 
 # Expose SSH port and run SSHD
 EXPOSE 22

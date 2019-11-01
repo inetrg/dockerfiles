@@ -1,10 +1,10 @@
 ############################################################
-# Dockerfile for Jenkins slave with clang-4.0
-# Based on Debian Stretch
+# Dockerfile for Jenkins slave with gcc 8.3
+# Based on Debian Buster
 ############################################################
 
-FROM debian:stretch
-MAINTAINER Raphael Hiesgen
+FROM debian:buster
+MAINTAINER Jakob Otto
 
 # Install Essentials
 RUN apt-get update -y && \
@@ -18,9 +18,10 @@ RUN apt-get update -y && \
 RUN apt-get install -y git \
   wget \
   openssh-server \
-  openjdk-8-jdk \
+  openjdk-11-jdk \
   cmake \
-  clang-4.0 \
+  gcc g++ \
+  clang \
   libssl-dev \
   gcovr \
  && apt-get autoclean
@@ -36,10 +37,6 @@ RUN sed -ri 's/^session\s+required\s+pam_loginuid.so$/session optional pam_login
 
 # Create Jenkins User
 RUN useradd jenkins -m -s /bin/bash
-
-# set clang as default compiler
-RUN echo "export CXX=clang++-4.0" >> /home/jenkins/.bashrc \
-   && echo "export CC=clang-4.0" >> /home/jenkins/.bashrc
 
 # Add public key for Jenkins login
 RUN mkdir /home/jenkins/.ssh
