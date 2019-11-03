@@ -10,7 +10,7 @@ DOCKERFILE_TAG=${TAG:-caf-jenkins-}
 
 build_file() {
   echo "Building docker file $1"
-  docker build -q -t $1 -f $1 .
+  docker build -q -t $1 -f $1 . || exit 1
 }
 
 if ls ${DOCKERFILE_TAG}* 1> /dev/null 2>&1; then
@@ -20,4 +20,5 @@ if ls ${DOCKERFILE_TAG}* 1> /dev/null 2>&1; then
 	done
 else
 	echo "No files starting with '${DOCKERFILE_TAG}' found."
+	exit 1
 fi

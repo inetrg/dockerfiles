@@ -16,9 +16,9 @@ upload_image() {
 	echo "uploading $name"
 	if $(docker inspect --type=image $name  > /dev/null 2>&1)
 	then
-		docker tag $name $DOCKERHUB_LOGIN/$name:$VERSION
-		docker tag $name $DOCKERHUB_LOGIN/$name:latest
-		docker push $DOCKERHUB_LOGIN/$name
+		docker tag $name $DOCKERHUB_LOGIN/$name:$VERSION || exit 1
+		docker tag $name $DOCKERHUB_LOGIN/$name:latest || exit 1
+		docker push $DOCKERHUB_LOGIN/$name || exit 1
 	fi
 }
 
