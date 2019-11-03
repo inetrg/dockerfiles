@@ -9,6 +9,8 @@ MAINTAINER Jakob Otto
 # Install Essentials
 RUN yum update -y \
    && yum install -y centos-release-scl \
+   && yum install -y epel-release \
+   && yum update -y \
    && yum clean all
 
 ##################### INSTALL TOOLS ########################
@@ -19,14 +21,13 @@ RUN yum install -y git \
   make \
   openssh-server \
   sudo \
-  java-11-openjdk \
+  java-1.8.0-openjdk \
   cmake3 \
-  docker \
   openssl-devel \
-  libasan \
   libubsan \
   python-pip \
   devtoolset-7 \
+  devtoolset-7-libasan-devel \
  && yum clean all
 
 ####################### SETUP SSH #########################
