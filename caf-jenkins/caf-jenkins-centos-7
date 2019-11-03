@@ -20,11 +20,8 @@ RUN yum install -y git \
   openssh-server \
   sudo \
   java-11-openjdk \
-  cmake \
+  cmake3 \
   docker \
-  kcov \
-  gcc gcc-c++ \
-  clang \
   openssl-devel \
   libasan \
   libubsan \
@@ -44,25 +41,18 @@ RUN sed -ri 's/^session\s+required\s+pam_loginuid.so$/session optional pam_login
 # Create Jenkins User
 RUN useradd jenkins -m -s /bin/bash
 
-# enable scl tools for gcc 7.3
-RUN echo "source scl_source enable devtoolset-7" >> /home/jenkins/.bashrc
-
 # Add public key for Jenkins login
 RUN mkdir /home/jenkins/.ssh
+RUN mkdir /home/jenkins/bin
 COPY authorized_keys /home/jenkins/.ssh/authorized_keys
 RUN chown -R jenkins /home/jenkins
 RUN chgrp -R jenkins /home/jenkins
 RUN chmod 600 /home/jenkins/.ssh/authorized_keys
 RUN chmod 700 /home/jenkins/.ssh
 
-# Add the jenkins user to sudoers
-# RUN echo "jenkins  ALL=(ALL)  ALL" >> etc/sudoers
-
-# Set Name Servers
-# COPY /files/resolv.conf /etc/resolv.conf
-
-# Ubuntu requires this dir to be created
-# RUN mkdir -p /var/run/sshd
+# Create symlinks to cmake3 binaries in local bin directory.
+RUN ln -s /usr/bin/cmake3 /home/jenkins/bin
+RUN ln -s /usr/bin/ctest3 /home/jenkins/bin
 
 # Expose SSH port and run SSHD
 EXPOSE 22
