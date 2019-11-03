@@ -32,7 +32,9 @@ RUN yum install -y git \
 ####################### SETUP SSH #########################
 
 # gen dummy keys, centos doesn't autogen them like ubuntu does
-RUN /usr/bin/ssh-keygen -A
+RUN ssh-keygen -q -N "" -t dsa -f /etc/ssh/ssh_host_dsa_key
+RUN ssh-keygen -q -N "" -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key
+RUN ssh-keygen -q -N "" -t ecdsa -f /etc/ssh/ssh_host_ecdsa_key
 
 # Set SSH Configuration to allow remote logins without /proc write access
 RUN sed -ri 's/^session\s+required\s+pam_loginuid.so$/session optional pam_loginuid.so/' \
