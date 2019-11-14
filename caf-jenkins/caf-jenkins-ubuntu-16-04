@@ -20,8 +20,8 @@ RUN apt-get install -y git \
   openssh-server \
   openjdk-8-jdk \
   cmake \
-  gcc g++ \
   clang-4.0 \
+  libc++-dev \
   libssl-dev \
   gcovr \
  && apt-get autoclean
