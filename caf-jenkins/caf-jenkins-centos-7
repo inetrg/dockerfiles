@@ -28,6 +28,7 @@ RUN yum install -y git \
   python-pip \
   devtoolset-7 \
   devtoolset-7-libasan-devel \
+  devtoolset-7-libubsan-devel \
  && yum clean all
 
 ####################### SETUP SSH #########################
